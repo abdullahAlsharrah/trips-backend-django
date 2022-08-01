@@ -24,7 +24,7 @@ class Profile(models.Model):
         User, on_delete=models.CASCADE, primary_key=True)
     gender = models.CharField(max_length=10, choices=gender_choices)
     birth_date = models.DateField()
-    image = models.ImageField()
+    image = models.ImageField(upload_to="profile/",default="" )
     bio = models.TextField()
     date_joined = models.DateField(auto_now_add=True)
 
