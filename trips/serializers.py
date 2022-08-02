@@ -23,7 +23,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password','refresh', 'access']
-
     def create(self, validated_data):
         new_user = User(**validated_data)
         new_user.set_password(new_user.password)
@@ -33,11 +32,20 @@ class UserCreateSerializer(serializers.ModelSerializer):
         validated_data['access'] = str(token.access_token)
 
         # create profile
+        try:
+            gender=self.context['request'].data["gender"]
+            birth_date=self.context['request'].data["birth_date"]
+            image=self.context['request'].data['image']
+        except:
+            gender=""
+            birth_date="1990-01-01"
+            image=""
+
         Profile.objects.create(
             user = new_user,
-            gender=self.context['request'].data["gender"],
-            birth_date=self.context['request'].data["birth_date"],
-            image=self.context['request'].data['image'],
+            gender=gender,
+            birth_date=birth_date,
+            image=image
             # etc... 
         )
         # data = {'profile': profile ,'access':validated_data['access'], 'refresh':validated_data['refresh'],'username':validated_data['username'] }
