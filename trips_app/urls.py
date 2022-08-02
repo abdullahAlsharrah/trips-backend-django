@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
-from trips.views import Register, UserTokenApiView
+from trips.views import CreateTrip, DeleteTrip, ProfileView, Register, TripDetails, TripList, UpdateProfile, UpdateDeleteTrip, UserTokenApiView, UserTripList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +29,18 @@ urlpatterns = [
     path('register/', Register.as_view(), name='register'),
     path('login/', UserTokenApiView.as_view(), name='login'),
     path('token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # profile APIs
+    path('profile/<int:profile_id>/', ProfileView.as_view()),
+    path('my-profile/', UpdateProfile.as_view()),
+
+    # Trips APIs 
+    path('trips/', TripList.as_view()),
+    path('new-trip/', CreateTrip.as_view()),
+    path('my-trips/', UserTripList.as_view()),
+    path('trip/<int:trip_id>', UpdateDeleteTrip.as_view()), # user can delete , update and view their own trips must be owned by them
+    path('trip/details/<int:trip_id>', TripDetails.as_view()), # anyone can view the trip details ... shouldnt be authintecated and the trip shoulnt be owned by the viewer
+
 ]
 
 if settings.DEBUG:

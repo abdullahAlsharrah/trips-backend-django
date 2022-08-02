@@ -2,7 +2,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from .models import Profile
+from .models import Profile, Trip
 ## for adding more details such as username in the token
 
 User = get_user_model()
@@ -43,3 +43,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
         # data = {'profile': profile ,'access':validated_data['access'], 'refresh':validated_data['refresh'],'username':validated_data['username'] }
 
         return validated_data
+
+class TripSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model= Trip
+        fields= ["profile",'title','description','image']
+
+class ProfileViewSerilizer(serializers.ModelSerializer):
+    trips = TripSerilizer(many=True)
+    class Meta:
+        model= Profile
+        fields= '__all__'
+
+

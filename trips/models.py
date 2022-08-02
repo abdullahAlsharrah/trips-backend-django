@@ -4,18 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
-class Trip(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
-    description = models.TextField()
-    image = models.ImageField()
-
-    def __str__(self):
-        return self.title
-
-
 class Profile(models.Model):
-
     gender_choices = [
         ("male", "male"),
         ("female", "female"),
@@ -29,4 +18,13 @@ class Profile(models.Model):
     date_joined = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.id)+" "+ self.user.username
+
+class Trip(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True,related_name="trips")   
+    title = models.CharField(max_length=50)
+    description = models.TextField()
+    image = models.ImageField(upload_to="trips/",default="")
+
+    def __str__(self):
+        return self.title
