@@ -1,3 +1,4 @@
+from pyexpat import model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -52,10 +53,28 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
         return validated_data
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields=['username','id']
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = Profile
+        fields=['user']
+
 class TripSerilizer(serializers.ModelSerializer):
+    profile = ProfileSerializer()
     class Meta:
         model= Trip
-        fields= ["profile",'title','description','image']
+        # fields= ["profile",'title','description','image']
+        fields= '__all__'
+
+class CreateTripSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model= Trip
+        fields= ['title','description','image']
 
 class ProfileViewSerilizer(serializers.ModelSerializer):
     trips = TripSerilizer(many=True)

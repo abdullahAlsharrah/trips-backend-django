@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from trips.models import Profile, Trip
-from .serializers import  ProfileViewSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer
+from .serializers import  CreateTripSerilizer, ProfileViewSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer
 from rest_framework.generics import (
     ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView,RetrieveUpdateDestroyAPIView
 )
@@ -21,7 +21,7 @@ class Register(CreateAPIView):
 # Trips
 
 class CreateTrip(CreateAPIView):
-    serializer_class = TripSerilizer
+    serializer_class = CreateTripSerilizer
     permission_classes = [IsAuthenticated,]
     def perform_create(self, serializer):
         serializer.save(profile = self.request.user.profile)
