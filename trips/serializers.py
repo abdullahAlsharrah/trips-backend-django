@@ -78,6 +78,7 @@ class CreateTripSerilizer(serializers.ModelSerializer):
 
 class ProfileViewSerilizer(serializers.ModelSerializer):
     trips = TripSerilizer(many=True)
+    user = UserSerializer()
     class Meta:
         model= Profile
         fields= '__all__'
