@@ -13,7 +13,7 @@ class Profile(models.Model):
         User, on_delete=models.CASCADE, primary_key=True)
     gender = models.CharField(max_length=10, choices=gender_choices, default="")
     birth_date = models.DateField(default="1990-01-01")
-    image = models.ImageField(upload_to="profile/",default="https://millingtontownship.com/wp-content/uploads/2021/01/default.jpg")
+    image = models.ImageField(upload_to="profile/",default="")
     bio = models.TextField(default="To change your bio, edit your profile!")
     date_joined = models.DateField(auto_now_add=True)
 
