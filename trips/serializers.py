@@ -56,7 +56,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields=['username','id']
+        fields=['username','id','first_name','last_name']
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -70,6 +70,11 @@ class TripSerilizer(serializers.ModelSerializer):
         model= Trip
         # fields= ["profile",'title','description','image']
         fields= '__all__'
+
+class TripEditSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model= Trip
+        fields= ['title','description','image']
 
 class CreateTripSerilizer(serializers.ModelSerializer):
     class Meta:

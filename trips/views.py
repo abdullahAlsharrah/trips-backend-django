@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from trips.models import Profile, Trip
-from .serializers import  CreateTripSerilizer, ProfileViewSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer
+from .serializers import  CreateTripSerilizer, ProfileViewSerilizer, TripEditSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer
 from rest_framework.generics import (
     ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView,RetrieveUpdateDestroyAPIView
 )
@@ -46,7 +46,7 @@ class TripDetails(RetrieveAPIView):
 
 class UpdateDeleteTrip(RetrieveUpdateDestroyAPIView):
     queryset = Trip.objects.all()
-    serializer_class = TripSerilizer
+    serializer_class = TripEditSerilizer
     permission_classes = [IsAuthenticated,IsTripOwner,]
     lookup_field = 'id'
     lookup_url_kwarg='trip_id'
