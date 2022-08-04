@@ -8,6 +8,7 @@
 __pycache__
 MANIFEST
 env/
+media/
 dist/
 docs/_build/
 docs/locale/
@@ -17,3 +18,4 @@ tests/.coverage
 build/
 tests/report/
 .env
+.media
