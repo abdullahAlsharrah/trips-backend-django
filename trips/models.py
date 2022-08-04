@@ -6,12 +6,13 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     gender_choices = [
+        ("Gender", "Gender"),
         ("male", "male"),
         ("female", "female"),
     ]
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True)
-    gender = models.CharField(max_length=10, choices=gender_choices, default="")
+    gender = models.CharField(max_length=10, choices=gender_choices, default="Gender")
     birth_date = models.DateField(default="1990-01-01")
     image = models.ImageField(upload_to="profile/",default="")
     bio = models.TextField(default="To change your bio, edit your profile!")
