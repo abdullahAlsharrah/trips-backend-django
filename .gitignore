@@ -19,3 +19,4 @@ build/
 tests/report/
 .env
 .media
+db.sqlite3
