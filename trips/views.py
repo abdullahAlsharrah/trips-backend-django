@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from trips.models import  Profile, Trip
-from .serializers import  CreateTripSerilizer, FavoriteTripSerilizer, ProfileViewSerilizer, TripEditSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer
+from .serializers import  CreateTripSerilizer, FavoriteTripSerilizer, ProfileViewSerilizer, TripEditSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer, WantToGoTripSerilizer
 from rest_framework.generics import (
     ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView,RetrieveUpdateDestroyAPIView
 )
@@ -42,24 +42,19 @@ class MyFavoriteTripList(ListAPIView):
     def get_queryset(self):
         return Trip.objects.filter(favorite__in=str(self.request.user.id))
 
-class AddFavoriteTripList(RetrieveUpdateAPIView):
+class AddFavoriteTrip(RetrieveUpdateAPIView):
     queryset = Trip.objects.all()
     serializer_class = FavoriteTripSerilizer
     permission_classes = [IsAuthenticated,]
     lookup_field = 'id'
     lookup_url_kwarg='trip_id'
-    # def get_queryset(self):
-    #     query = self.request.GET
-    #     object =Trip.objects.filter(id=query['trip_id'])
-    #     print(object)
-    #     if str(self.request.user.id) in object.favorite:
-    #         # object.favorite.remove(str(self.request.user.id))
-    #         # object.save()
-    #         print("Yes")
-    #     else:
-    #     #    object.favorite.append(str(self.request.user.id)) 
-    #     #    object.save()
-    #         print("NO")
+
+class WantToGoTrip(RetrieveUpdateAPIView):
+    queryset = Trip.objects.all()
+    serializer_class = WantToGoTripSerilizer
+    permission_classes = [IsAuthenticated,]
+    lookup_field = 'id'
+    lookup_url_kwarg='trip_id'
        
          
 

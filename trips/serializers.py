@@ -89,6 +89,17 @@ class FavoriteTripSerilizer(serializers.ModelSerializer):
              instance.favorite.add(self.context['request'].user.id)
         return instance
 
+class WantToGoTripSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model= Trip
+        fields= ['want_to']
+    def update(self, instance, validated_data):
+        if (instance.want_to.filter(user__id=self.context['request'].user.id).exists()):
+            instance.want_to.remove(self.context['request'].user.id)
+        else:
+             instance.want_to.add(self.context['request'].user.id)
+        return instance
+
 
 
 class TripEditSerilizer(serializers.ModelSerializer):
@@ -104,6 +115,7 @@ class CreateTripSerilizer(serializers.ModelSerializer):
 class ProfileViewSerilizer(serializers.ModelSerializer):
     trips = TripSerilizer(many=True,read_only=True)
     favorite =serializers.SerializerMethodField()
+    want_to =serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
     class Meta:
         model= Profile
@@ -114,9 +126,11 @@ class ProfileViewSerilizer(serializers.ModelSerializer):
 
     def get_favorite(self, obj):
         trips = Trip.objects.all()
-        # print(trips)
-        # _trips = trips.objects.filter(favorite__in= 2)
         return t(obj.my_favorite_list(trips))
+
+    def get_want_to(self, obj):
+        trips = Trip.objects.all()
+        return t(obj.my_want_to_list(trips))
   
 
 
