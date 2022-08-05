@@ -1,9 +1,10 @@
+import profile
 from pyexpat import model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-
-from .models import Profile, Trip
+from .utils import trips as t,username
+from .models import  Profile, Trip
 ## for adding more details such as username in the token
 
 User = get_user_model()
@@ -56,7 +57,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields=['username','id','first_name','last_name']
+        fields=['username','id']
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -65,11 +66,27 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields=['user']
 
 class TripSerilizer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    # profile=ProfileSerializer()
+    owner = serializers.SerializerMethodField()
     class Meta:
         model= Trip
-        # fields= ["profile",'title','description','image']
         fields= '__all__'
+
+    def get_owner(self, obj):
+        return username(obj.get_owner())
+
+class FavoriteTripSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model= Trip
+        fields= ['favorite']
+    def update(self, instance, validated_data):
+        if (instance.favorite.filter(user__id=self.context['request'].user.id).exists()):
+            instance.favorite.remove(self.context['request'].user.id)
+        else:
+             instance.favorite.add(self.context['request'].user.id)
+        return instance
+
+
 
 class TripEditSerilizer(serializers.ModelSerializer):
     class Meta:
@@ -83,9 +100,20 @@ class CreateTripSerilizer(serializers.ModelSerializer):
 
 class ProfileViewSerilizer(serializers.ModelSerializer):
     trips = TripSerilizer(many=True,read_only=True)
-    user = UserSerializer()
+    favorite =serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
     class Meta:
         model= Profile
         fields= '__all__'
+
+    def get_username(self, obj):
+        return obj.get_username()
+
+    def get_favorite(self, obj):
+        trips = Trip.objects.all()
+        # print(trips)
+        # _trips = trips.objects.filter(favorite__in= 2)
+        return t(obj.my_favorite_list(trips))
+  
 
 
