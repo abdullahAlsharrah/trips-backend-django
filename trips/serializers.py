@@ -3,7 +3,7 @@ from pyexpat import model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .utils import trips as t,username
+from .utils import trips as t,username,owner_image
 from .models import  Profile, Trip
 ## for adding more details such as username in the token
 
@@ -63,17 +63,20 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Profile
-        fields=['user']
+        fields=['image']
 
 class TripSerilizer(serializers.ModelSerializer):
-    # profile=ProfileSerializer()
+    # profile = ProfileSerializer()
     owner = serializers.SerializerMethodField()
+    owner_image = serializers.SerializerMethodField()
     class Meta:
         model= Trip
         fields= '__all__'
 
     def get_owner(self, obj):
         return username(obj.get_owner())
+    def get_owner_image(self, obj):
+        return owner_image(obj.get_owner_image())
 
 class FavoriteTripSerilizer(serializers.ModelSerializer):
     class Meta:

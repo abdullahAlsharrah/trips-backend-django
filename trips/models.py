@@ -45,7 +45,9 @@ class Trip(models.Model):
     image = models.ImageField(upload_to="trips/",default="")
 
     def get_owner(self):
-        print(self.profile)
+        return self.profile
+
+    def get_owner_image(self):
         return self.profile
 
     def __str__(self):
