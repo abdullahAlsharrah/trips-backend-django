@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from trips.models import  Profile, Trip
-from .serializers import  CreateTripSerilizer, FavoriteTripSerilizer, ProfileViewSerilizer, TripEditSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer, WantToGoTripSerilizer
+from trips.models import  Profile, Question, Trip
+from .serializers import  CreateTripSerilizer, DeleteTripSerilizer, FavoriteTripSerilizer, PostQuestionSerilizer, ProfileViewSerilizer, ReplyQuestionSerilizer, TripEditSerilizer, TripSerilizer, UserTokenSerializer,UserCreateSerializer, WantToGoTripSerilizer
 from rest_framework.generics import (
     ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView,RetrieveUpdateDestroyAPIView
 )
 from rest_framework.permissions import IsAuthenticated
-from .permissions import  IsOwner,IsTripOwner
+from .permissions import  IsOwner,IsTripOwner, isOwnerOfTrip
 # Create your views here.
 
 # Auth Views 
@@ -74,7 +74,7 @@ class UpdateDeleteTrip(RetrieveUpdateDestroyAPIView):
 
 class DeleteTrip(DestroyAPIView):
     queryset = Trip.objects.all()
-    serializer_class = TripSerilizer
+    serializer_class = DeleteTripSerilizer
     permission_classes = [IsAuthenticated,IsTripOwner,]
     lookup_field = 'id'
     lookup_url_kwarg='trip_id'
@@ -93,3 +93,21 @@ class ProfileView(RetrieveAPIView):
     lookup_field = 'user__id'
     lookup_url_kwarg='profile_id'
    
+#questions 
+
+class PostQuestion(CreateAPIView):
+    serializer_class = PostQuestionSerilizer
+    permission_classes = [IsAuthenticated,]
+    def perform_create(self, serializer):
+        query = self.request.GET
+        print(query['trip_id'])
+        trip = Trip.objects.get(id = int(query['trip_id']))
+        serializer.save(profile = self.request.user.profile , trip = trip) 
+        
+class ReplyOnQuestion(CreateAPIView):
+    serializer_class = ReplyQuestionSerilizer
+    permission_classes = [IsAuthenticated,isOwnerOfTrip]
+    def perform_create(self, serializer):
+        query = self.request.GET
+        question = Question.objects.get(id = int(query['question_id']))
+        serializer.save(profile = self.request.user.profile , question = question) 

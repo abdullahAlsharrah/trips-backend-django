@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 
 
 
+
+
 class Profile(models.Model):
     gender_choices = [
         ("Gender", "Gender"),
@@ -62,4 +64,12 @@ class Trip(models.Model):
         return self.title
 
 
- 
+class Question(models.Model):
+    text = models.CharField(max_length=250,default="")
+    trip = models.ForeignKey(Trip, on_delete=models.SET_NULL, null=True,related_name="questions")   
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True,related_name="questions")   
+
+class Reply(models.Model):
+    text = models.CharField(max_length=250,default="")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True,related_name="replies")   
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True,related_name="replies")   

@@ -4,7 +4,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .utils import trips as t,username,owner_image
-from .models import  Profile, Trip
+from .models import  Profile, Question, Reply, Trip
 ## for adding more details such as username in the token
 
 User = get_user_model()
@@ -65,18 +65,37 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields=['image']
 
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields='__all__'
+
+
+class DeleteTripSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model= Trip
+        fields= ['title']
+
 class TripSerilizer(serializers.ModelSerializer):
-    # profile = ProfileSerializer()
+    questions =serializers.SerializerMethodField()
     owner = serializers.SerializerMethodField()
     owner_image = serializers.SerializerMethodField()
     class Meta:
         model= Trip
-        fields= '__all__'
+        fields= ['id','owner','owner_image','title','description','image','profile','favorite','want_to','questions']
 
     def get_owner(self, obj):
         return username(obj.get_owner())
+
     def get_owner_image(self, obj):
         return owner_image(obj.get_owner_image())
+
+    def get_questions(self, obj):
+        questions = Question.objects.filter(trip__id=obj.id).values('id','replies','trip','profile','text',)
+        for question in questions:
+            question['replies'] = Reply.objects.filter(question__id=question['id']).values() 
+        return questions
+    
 
 class FavoriteTripSerilizer(serializers.ModelSerializer):
     class Meta:
@@ -131,6 +150,20 @@ class ProfileViewSerilizer(serializers.ModelSerializer):
     def get_want_to(self, obj):
         trips = Trip.objects.all()
         return t(obj.my_want_to_list(trips))
+
+class PostQuestionSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model=Question
+        fields='__all__'
+
+class ReplyQuestionSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model=Reply
+        fields='__all__'
+
+
+
+    
   
 
 
