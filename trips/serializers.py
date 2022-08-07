@@ -93,7 +93,11 @@ class TripSerilizer(serializers.ModelSerializer):
     def get_questions(self, obj):
         questions = Question.objects.filter(trip__id=obj.id).values('id','replies','trip','profile','text',)
         for question in questions:
-            question['replies'] = Reply.objects.filter(question__id=question['id']).values() 
+            question['replies'] = Reply.objects.filter(question__id=question['id']).values()
+            profile= Profile.objects.filter(user=question['profile']).values()[0]
+            question['image']= "http://10.0.2.2:8000/media/" + profile['image']
+            question['profile']= profile['user_id']
+           
         return questions
     
 
